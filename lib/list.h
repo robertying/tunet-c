@@ -1,3 +1,6 @@
+#ifndef LIST_H
+#define LIST_H
+
 #include "stdint.h"
 
 typedef uint32_t number;
@@ -15,3 +18,5 @@ void add_to_number_list(number_list *array, number value);
 void number_list_set(number_list *array, int index, number value);
 number number_list_get(number_list *array, int index);
 void change_number_list_length(number_list *array, int length);
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef UTF_H
+#define UTF_H
+
 #include <stdint.h>
 
 struct utf_char
@@ -16,3 +19,5 @@ typedef struct utf_string utf_string;
 
 int char_code_at(utf_char a);
 utf_char from_char_code(uint32_t a);
+
+#endif
