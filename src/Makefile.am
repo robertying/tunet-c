@@ -7,5 +7,6 @@ libtunet_la_LIBADD = ../lib/libportal.la $(CRYPTOLIB) $(CURLLIB)
 bin_PROGRAMS = tunet
 tunet_SOURCES = cli.c
 tunet_LDADD = ./libtunet.la
+tunet_LDFLAGS = -L$(prefix)/lib -Wl,-rpath -Wl,$(prefix)/lib
 
 include_HEADERS = tunet.h
