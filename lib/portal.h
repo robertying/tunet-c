@@ -1,7 +1,7 @@
 #ifndef PORTAL_H
 #define PORTAL_H
 
-#include "../sds/sds.h"
+#include "sds.h"
 
 sds x_encode(const sds str, const sds key);
 sds sha1(const char *str);
