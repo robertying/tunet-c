@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "utf8proc.h"
+#include "../utf8proc/utf8proc.h"
+
 #include "utf.h"
 
 int char_code_at(utf_char a)

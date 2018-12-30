@@ -3,7 +3,8 @@
 #include <openssl/sha.h>
 #include <openssl/md5.h>
 #include <openssl/hmac.h>
-#include "utf8proc.h"
+#include "../utf8proc/utf8proc.h"
+
 #include "list.h"
 #include "utf.h"
 #include "portal.h"
