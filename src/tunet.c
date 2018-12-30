@@ -3,8 +3,9 @@
 #include <string.h>
 
 #include <curl/curl.h>
-#include "lib/cJSON.h"
-#include "lib/sds.h"
+#include "../cJSON/cJSON.h"
+#include "../sds/sds.h"
+
 #include "lib/portal.h"
 
 static const char *NET_URL = "https://net.tsinghua.edu.cn/do_login.php";

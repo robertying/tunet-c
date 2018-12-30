@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "lib/list.h"
+#include "../lib/list.h"
 
 int main(int argc, char const *argv[])
 {

@@ -4,13 +4,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "config.h"
 #include "tunet.h"
 
 void print_help()
 {
-    printf("\ntunet-c v0.1.0\n");
+    printf("\n%s\n", PACKAGE_STRING);
     printf("    C cli and library for Tsinghua University network login\n");
-    printf("    2018 © Robert Ying\n\n");
+    printf("    2018 © Robert Ying %s\n\n", PACKAGE_BUGREPORT);
     printf("Usage:\n");
     printf("\t-u\t Tsinghua username\n");
     printf("\t-p\t Tsinghua password\n");
@@ -120,7 +121,9 @@ int main(int argc, char **argv)
 
     if (!(username && password) && !config)
     {
-        fprintf(stderr, "Please use -u -p to enter the username and the password\nOr use -c to specify a credential config file\n");
+        fprintf(stderr, "Please use -u -p to enter the username and the password\n");
+        fprintf(stderr, "Or use -c to specify a credential config file\n");
+        fprintf(stderr, "Caution: enter password in cli is not recommended\n");
         exit(1);
     }
     else if (config)

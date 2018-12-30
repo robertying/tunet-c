@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "lib/portal.h"
+
+#include "../lib/portal.h"
 
 int main(int argc, char const *argv[])
 {
