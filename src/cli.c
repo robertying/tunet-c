@@ -126,7 +126,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "Caution: enter password in cli is not recommended\n");
         exit(1);
     }
-    else if (config)
+    else if (config && (username || password))
         printf("Config file will be used regardless of the input credential\n");
 
     if (config)
