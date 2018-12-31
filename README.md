@@ -25,7 +25,32 @@ opkg install /tmp/tunet_1.0.0-1_mipsel_24kc.ipk
 # Create a config file
 vim ~/.tunet_config
 # Use it!
-tunet -m auth -c .tunet_config
+tunet -m auth -c ~/.tunet_config
+```
+
+You could add an init script to run `tunet` on boot.
+
+```shell
+vim /etc/init.d/tunet
+```
+
+```shell
+#!/bin/sh /etc/rc.common
+# /etc/init.d/tunet
+
+START=99
+
+DELAY=40
+
+boot() {
+        [ $DELAY -gt 0 ] && sleep $DELAY
+        tunet -m auth -c /root/.tunet_config
+}
+```
+
+```shell
+chmod +x /etc/init.d/tunet
+/etc/init.d/tunet enable
 ```
 
 #### Compile for your own platform
@@ -36,7 +61,7 @@ Other platforms will be added gradually and you can always file an issue to requ
 
 The following can serve as a simple instruction for those who want to build by themselves:
 
--[ ] Under construction...
+- [ ] Under construction...
 
 1. Download OpenWrt SDK for your platform. Follow [Using the SDK](https://openwrt.org/docs/guide-developer/using_the_sdk).
 
