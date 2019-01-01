@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     int c;
     opterr = 0;
 
-    while ((c = getopt(argc, argv, "u:p:m:c:hr::")) != -1)
+    while ((c = getopt(argc, argv, "u:p:m:c:hr")) != -1)
         switch (c)
         {
         case 'u':
