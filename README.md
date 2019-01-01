@@ -1,10 +1,10 @@
 # tunet-c
 
-C cli and library for Tsinghua University network login.
+C cli and library for Tsinghua University network authentication.
 
 Support `auth4`, `auth6`, `net`.
 
-**Installation on `OpenWrt` is also available**!
+Installation on `OpenWrt` is also available!
 
 ## Installation
 
@@ -25,7 +25,7 @@ opkg install /tmp/tunet_1.0.0-1_mipsel_24kc.ipk
 # Create a config file
 vim ~/.tunet_config
 # Use it!
-tunet -m auth -c ~/.tunet_config
+tunet -m auth -c ~/.tunet_config -r
 ```
 
 You could add an init script to run `tunet` on boot.
@@ -44,7 +44,7 @@ DELAY=40
 
 boot() {
         [ $DELAY -gt 0 ] && sleep $DELAY
-        tunet -m auth -c /root/.tunet_config
+        tunet -m auth -c /root/.tunet_config -r
 }
 ```
 
@@ -122,6 +122,7 @@ A shared library `libtunet` in `/usr/local/lib` and a header file `tunet.h` in `
         -p       Tsinghua password
                     Caution: enter password in cli is not recommended
                     Please use config file instead
+        -r       Logout first before logging in
         -m       Network choice: [net auth auth4 auth6]
         -c       Credential config file path
                     Username should be in the first line and password in the second
@@ -131,8 +132,8 @@ A shared library `libtunet` in `/usr/local/lib` and a header file `tunet.h` in `
 ### Example
 
 ```shell
-tunet -m auth4 -u yingr16 -p iampassword
-tunet -m auth4 -c ~/mycredential
+tunet -m auth4 -u yingr16 -p iampassword -r
+tunet -m auth4 -c ~/mycredential -r
 ```
 
 ### Note
