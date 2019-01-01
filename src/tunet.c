@@ -8,6 +8,10 @@
 
 #include "../lib/portal.h"
 
+#define NET 0
+#define AUTH4 4
+#define AUTH6 6
+
 static const char *NET_URL = "https://net.tsinghua.edu.cn/do_login.php";
 static const char *AUTH4_URL = "https://auth4.tsinghua.edu.cn/cgi-bin/srun_portal";
 static const char *AUTH6_URL = "https://auth6.tsinghua.edu.cn/cgi-bin/srun_portal";
@@ -51,7 +55,7 @@ static sds get_challenge(CURL *curl, const char *username, char stack)
 {
     sds composed_url = sdscatprintf(sdsempty(),
                                     "%s?username=%s&double_stack=1&ip&callback=callback",
-                                    stack == 4 ? AUTH4_CHALLENGE_URL : AUTH6_CHALLENGE_URL,
+                                    stack == AUTH4 ? AUTH4_CHALLENGE_URL : AUTH6_CHALLENGE_URL,
                                     username);
     sds challenge;
 
@@ -110,7 +114,7 @@ static void auth_login(const char *username, const char *password, char stack)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, sdslen(data));
-    curl_easy_setopt(curl, CURLOPT_URL, stack == 4 ? AUTH4_URL : AUTH6_URL);
+    curl_easy_setopt(curl, CURLOPT_URL, stack == AUTH4 ? AUTH4_URL : AUTH6_URL);
     CURLcode success = curl_easy_perform(curl);
 
     if (success != CURLE_OK || strncmp(message, "login_ok", 8))
@@ -166,14 +170,67 @@ void net_login(const char *username, const char *password)
     curl_easy_cleanup(curl);
 }
 
+void logout(char stack)
+{
+    CURL *curl = curl_easy_init();
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+    sds composed_url = sdscatprintf(sdsempty(),
+                                    "%s?action=logout",
+                                    stack == NET ? NET_URL : stack == AUTH4 ? AUTH4_URL : AUTH6_URL);
+
+    sds message;
+    curl_easy_setopt(curl, CURLOPT_URL, composed_url);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, auth_login_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
+    CURLcode success = curl_easy_perform(curl);
+
+    if (stack == NET)
+    {
+        if (success != CURLE_OK || strncmp(message, "Logout is successful", 20))
+            fprintf(stderr, "Error: net logout\n\tMessage: %s\n", message);
+        else
+            printf("Success: net logout\n");
+    }
+    else
+    {
+        if (success != CURLE_OK || strncmp(message, "logout_ok", 9))
+            fprintf(stderr, "Error: auth%d logout\n\tMessage: %s\n", stack, message);
+        else
+            printf("Success: auth%d logout\n", stack);
+    }
+
+    sdsfree(composed_url);
+    sdsfree(message);
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+}
+
 void auth4_login(const char *username, const char *password)
 {
-    auth_login(username, password, 4);
+    auth_login(username, password, AUTH4);
 }
 
 void auth6_login(const char *username, const char *password)
 {
-    auth_login(username, password, 6);
+    auth_login(username, password, AUTH6);
+}
+
+void net_logout()
+{
+    logout(NET);
+}
+
+void auth4_logout()
+{
+    logout(AUTH4);
+}
+
+void auth6_logout()
+{
+    logout(AUTH6);
 }
 
 void tunet_init()
