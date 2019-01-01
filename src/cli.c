@@ -140,19 +140,23 @@ int main(int argc, char **argv)
     if (!strcmp(mode, "net"))
     {
         if (logout_first)
+        {
             net_logout();
+            sleep(1);
+        }
         net_login(username, password);
     }
     else if (!strcmp(mode, "auth4"))
     {
         if (logout_first)
+        {
             auth4_logout();
+            sleep(10);
+        }
         auth4_login(username, password);
     }
     else if (!strcmp(mode, "auth6"))
     {
-        if (logout_first)
-            auth6_logout();
         auth6_login(username, password);
     }
     else if (!strcmp(mode, "auth"))
@@ -160,7 +164,7 @@ int main(int argc, char **argv)
         if (logout_first)
         {
             auth4_logout();
-            auth6_logout();
+            sleep(10);
         }
         auth4_login(username, password);
         auth6_login(username, password);
