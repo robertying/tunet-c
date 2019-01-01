@@ -15,6 +15,7 @@ void print_help()
     printf("Usage:\n");
     printf("\t-u\t Tsinghua username\n");
     printf("\t-p\t Tsinghua password\n");
+    printf("\t-r\t Logout first before logging in\n");
     printf("\t\t    Caution: enter password in cli is not recommended\n");
     printf("\t\t    Please use config file instead\n");
     printf("\t-m\t Network choice: [net auth auth4 auth6]\n");
@@ -66,10 +67,11 @@ int main(int argc, char **argv)
     char *mode = NULL;
     char *config = NULL;
     char show_help = 0;
+    char logout_first = 0;
     int c;
     opterr = 0;
 
-    while ((c = getopt(argc, argv, "u:p:m:c:h")) != -1)
+    while ((c = getopt(argc, argv, "u:p:m:c:hr::")) != -1)
         switch (c)
         {
         case 'u':
@@ -86,6 +88,9 @@ int main(int argc, char **argv)
             break;
         case 'h':
             show_help = 1;
+            break;
+        case 'r':
+            logout_first = 1;
             break;
         case '?':
             if (optopt == 'u')
@@ -133,13 +138,30 @@ int main(int argc, char **argv)
         read_config(config, &username, &password);
 
     if (!strcmp(mode, "net"))
+    {
+        if (logout_first)
+            net_logout();
         net_login(username, password);
+    }
     else if (!strcmp(mode, "auth4"))
+    {
+        if (logout_first)
+            auth4_logout();
         auth4_login(username, password);
+    }
     else if (!strcmp(mode, "auth6"))
+    {
+        if (logout_first)
+            auth6_logout();
         auth6_login(username, password);
+    }
     else if (!strcmp(mode, "auth"))
     {
+        if (logout_first)
+        {
+            auth4_logout();
+            auth6_logout();
+        }
         auth4_login(username, password);
         auth6_login(username, password);
     }
