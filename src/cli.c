@@ -15,9 +15,9 @@ void print_help()
     printf("Usage:\n");
     printf("\t-u\t Tsinghua username\n");
     printf("\t-p\t Tsinghua password\n");
-    printf("\t-r\t Logout first before logging in\n");
     printf("\t\t    Caution: enter password in cli is not recommended\n");
     printf("\t\t    Please use config file instead\n");
+    printf("\t-r\t Logout first before logging in\n");
     printf("\t-m\t Network choice: [net auth auth4 auth6]\n");
     printf("\t-c\t Credential config file path\n");
     printf("\t\t    Username should be in the first line and password in the second\n");
