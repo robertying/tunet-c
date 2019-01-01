@@ -10,8 +10,8 @@
 void print_help()
 {
     printf("\n%s\n", PACKAGE_STRING);
-    printf("    C cli and library for Tsinghua University network login\n");
-    printf("    2018 © Robert Ying %s\n\n", PACKAGE_BUGREPORT);
+    printf("    C cli and library for Tsinghua University network authentication\n");
+    printf("    2019 © Robert Ying %s\n\n", PACKAGE_BUGREPORT);
     printf("Usage:\n");
     printf("\t-u\t Tsinghua username\n");
     printf("\t-p\t Tsinghua password\n");

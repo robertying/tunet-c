@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tunet
-PKG_VERSION:=1.0.0
+PKG_VERSION:=1.1.0
 PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Robert Ying <yingrui205@gmail.com>
@@ -9,7 +9,7 @@ PKG_LICENSE:=MIT
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/robertying/tunet-c/releases/download/v$(PKG_VERSION)
-PKG_HASH:=517432b93e35ea0f41cd6147cb1c74937d70c26ac47c278f175a21c336be2453
+PKG_HASH:=6701defd90fe1b6eeb2b4cf28beb7795dea4d845827086bd6c0a5cfb35ec74d7
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
@@ -21,7 +21,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/tunet/Default
   SECTION:=utils
   CATEGORY:=Network
-  TITLE:=Tsinghua University login utility
+  TITLE:=Tsinghua University authentication utility
   URL:=https://github.com/robertying/tunet-c
 endef
 
