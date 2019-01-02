@@ -3,8 +3,8 @@ AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 
-AC_CHECK_LIB([crypto], [SHA1], [CRYPTOLIB=-lcrypto])
-AC_CHECK_LIB([curl], [curl_easy_setopt], [CURLLIB=-lcurl])
+AC_CHECK_LIB([crypto], [SHA1], [CRYPTOLIB=-lcrypto], [AC_MSG_ERROR([Cannot find libopenssl])])
+AC_CHECK_LIB([curl], [curl_easy_setopt], [CURLLIB=-lcurl], [AC_MSG_ERROR([Cannot find libcurl])])
 AC_SUBST([CRYPTOLIB])
 AC_SUBST([CURLLIB])
 
