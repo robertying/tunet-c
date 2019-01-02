@@ -6,6 +6,7 @@
 #include "../lib/cJSON.h"
 #include "../lib/sds.h"
 
+#include "tunet.h"
 #include "../lib/portal.h"
 
 #define NET 0
@@ -138,7 +139,7 @@ static void auth_login(const char *username, const char *password, char stack)
     curl_easy_cleanup(curl);
 }
 
-void net_login(const char *username, const char *password)
+TUNET_DLLEXPORT void net_login(const char *username, const char *password)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -170,7 +171,7 @@ void net_login(const char *username, const char *password)
     curl_easy_cleanup(curl);
 }
 
-void logout(char stack)
+static void logout(char stack)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -208,37 +209,37 @@ void logout(char stack)
     curl_easy_cleanup(curl);
 }
 
-void auth4_login(const char *username, const char *password)
+TUNET_DLLEXPORT void auth4_login(const char *username, const char *password)
 {
     auth_login(username, password, AUTH4);
 }
 
-void auth6_login(const char *username, const char *password)
+TUNET_DLLEXPORT void auth6_login(const char *username, const char *password)
 {
     auth_login(username, password, AUTH6);
 }
 
-void net_logout()
+TUNET_DLLEXPORT void net_logout()
 {
     logout(NET);
 }
 
-void auth4_logout()
+TUNET_DLLEXPORT void auth4_logout()
 {
     logout(AUTH4);
 }
 
-void auth6_logout()
+TUNET_DLLEXPORT void auth6_logout()
 {
     logout(AUTH6);
 }
 
-void tunet_init()
+TUNET_DLLEXPORT void tunet_init()
 {
     curl_global_init(CURL_GLOBAL_ALL);
 }
 
-void tunet_cleanup()
+TUNET_DLLEXPORT void tunet_cleanup()
 {
     curl_global_cleanup();
 }
