@@ -1,7 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include "stdint.h"
+#include <stdint.h>
 
 typedef uint32_t number;
 
