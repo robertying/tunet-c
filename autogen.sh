@@ -1,3 +1,5 @@
+#!/bin/bash
+
 mkdir -p m4
 cp cJSON/cJSON.c lib/
 cp cJSON/cJSON.h lib/
