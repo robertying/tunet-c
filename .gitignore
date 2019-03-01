@@ -120,4 +120,8 @@ lib/utf8proc.h
 lib/utf8proc_data.c
 
 # make binary
+build/
 tunet*
+
+# jni
+!tunet-jni.c
