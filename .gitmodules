@@ -15,3 +15,6 @@
 	path = curl
 	url = https://github.com/curl/curl.git
 	ignore = dirty
+[submodule "openssl-curl-android"]
+	path = openssl-curl-android
+	url = https://github.com/robertying/openssl-curl-android.git
