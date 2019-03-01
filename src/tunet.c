@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include <curl/curl.h>
-#include "../lib/cJSON.h"
-#include "../lib/sds.h"
+#include <cJSON.h>
+#include <sds.h>
 
 #include "tunet.h"
 #include "../lib/portal.h"

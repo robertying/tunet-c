@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-
-#include "utf8proc.h"
+#include <utf8proc.h>
 
 #include "utf.h"
 
