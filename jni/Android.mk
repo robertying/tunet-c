@@ -2,20 +2,20 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := ssl
-LOCAL_SRC_FILES := build/openssl/$(TARGET_ARCH_ABI)/lib/libssl.a
-LOCAL_EXPORT_CFLAGS := -I$(LOCAL_PATH)/build/openssl/$(TARGET_ARCH_ABI)/include
+LOCAL_SRC_FILES := ../openssl-curl-android/build/openssl/$(TARGET_ARCH_ABI)/lib/libssl.a
+LOCAL_EXPORT_CFLAGS := -I$(LOCAL_PATH)/../openssl-curl-android/build/openssl/$(TARGET_ARCH_ABI)/include
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := crypto
-LOCAL_SRC_FILES := build/openssl/$(TARGET_ARCH_ABI)/lib/libcrypto.a
-LOCAL_EXPORT_CFLAGS := -I$(LOCAL_PATH)/build/openssl/$(TARGET_ARCH_ABI)/include
+LOCAL_SRC_FILES := ../openssl-curl-android/build/openssl/$(TARGET_ARCH_ABI)/lib/libcrypto.a
+LOCAL_EXPORT_CFLAGS := -I$(LOCAL_PATH)/../openssl-curl-android/build/openssl/$(TARGET_ARCH_ABI)/include
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := curl
-LOCAL_SRC_FILES := build/curl/$(TARGET_ARCH_ABI)/lib/libcurl.a
-LOCAL_EXPORT_CFLAGS := -I$(LOCAL_PATH)/build/curl/$(TARGET_ARCH_ABI)/include
+LOCAL_SRC_FILES := ../openssl-curl-android/build/curl/$(TARGET_ARCH_ABI)/lib/libcurl.a
+LOCAL_EXPORT_CFLAGS := -I$(LOCAL_PATH)/../openssl-curl-android/build/curl/$(TARGET_ARCH_ABI)/include
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
