@@ -83,6 +83,12 @@ The following can serve as a simple instruction for those who want to build by t
 
 10. Binary will be listed in `$OPENWRT_SDK/bin/packages/$ARCH/$FEED_NAME`.
 
+### Android
+
+Use Android NDK to link `Android.mk` under `jni` directory.
+
+Then you can start project make.
+
 ### Linux
 
 Now you can only build `tunet` from source for general Linux distributions.
