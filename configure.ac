@@ -1,4 +1,4 @@
-AC_INIT([tunet], [1.1.0], [github.com/robertying/tunet-c])
+AC_INIT([tunet], [2.0.0], [github.com/robertying/tunet-c])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
