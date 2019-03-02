@@ -12,6 +12,9 @@ AC_CANONICAL_HOST
 build_linux=no
 build_windows=no
 case "${host_os}" in
+    darwin*)
+        build_linux=yes
+        ;;
     linux*)
         build_linux=yes
         ;;
