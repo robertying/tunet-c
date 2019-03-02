@@ -35,6 +35,20 @@ extern "C"
         INVALID_IP,         // E2833
     } res;
 
+    static const char *res_string[] = {
+        "NULL",
+        "SUCCESS",
+        "UNKNOWN_ERR",
+        "EMPTY_CHALLENGE",
+        "WRONG_CREDENTIAL",
+        "OUT_OF_BALANCE",
+        "TOO_SHORT_INTERVAL",
+        "TOO_MANY_ATTEMPTS",
+        "ALREADY_ONLINE",
+        "INVALID_IP"};
+
+    extern char *CA_BUNDLE_PATH;
+
     TUNET_DLLEXPORT void tunet_init();
     TUNET_DLLEXPORT void tunet_cleanup();
     TUNET_DLLEXPORT res net_login(const char *username, const char *password);
