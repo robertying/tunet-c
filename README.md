@@ -85,9 +85,7 @@ The following can serve as a simple instruction for those who want to build by t
 
 ### Android
 
-Use Android NDK to link `Android.mk` under `jni` directory.
-
-Then you can start project make.
+See [CampusNet-Android](https://github.com/robertying/CampusNet-Android).
 
 ### Linux
 
