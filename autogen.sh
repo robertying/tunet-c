@@ -1,5 +1,10 @@
 #!/bin/bash
 
+cd openssl
+./config
+make
+cd ..
+
 mkdir -p m4
 cp cJSON/cJSON.c lib/
 cp cJSON/cJSON.h lib/
