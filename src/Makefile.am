@@ -1,11 +1,10 @@
-AM_CPPFLAGS = -I$(srcdir)/../lib  -I$(srcdir)
-
 lib_LTLIBRARIES = libtunet.la
+libtunet_la_CPPFLAGS = -I$(srcdir)/../lib  -I$(srcdir)
 libtunet_la_SOURCES = tunet.c tunet.h
 libtunet_la_LIBADD = ../lib/libportal.la $(CRYPTOLIB) $(CURLLIB)
 if WINDOWS
 libtunet_la_LDFLAGS = -no-undefined
-libtunet_la_CPPFLAGS = -DTUNET_EXPORTS
+libtunet_la_CPPFLAGS += -DTUNET_EXPORTS
 endif
 
 if WINDOWS
