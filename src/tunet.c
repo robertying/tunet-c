@@ -75,7 +75,35 @@ static sds get_challenge(CURL *curl, const char *username, char stack)
     return challenge;
 }
 
-static void auth_login(const char *username, const char *password, char stack)
+static res check_response(sds message)
+{
+    res response = UNKNOWN_ERR;
+
+    if (strstr(message, "E2553") != NULL ||
+        strstr(message, "E2531") != NULL ||
+        strstr(message, "E5992") != NULL)
+        response = WRONG_CREDENTIAL;
+
+    else if (strstr(message, "E3004") != NULL ||
+             strstr(message, "E2616") != NULL)
+        response = OUT_OF_BALANCE;
+
+    else if (strstr(message, "E2532") != NULL)
+        response = TOO_SHORT_INTERVAL;
+
+    else if (strstr(message, "E2533") != NULL)
+        response = TOO_MANY_ATTEMPTS;
+
+    else if (strstr(message, "E2620") != NULL)
+        response = ALREADY_ONLINE;
+
+    else if (strstr(message, "E2833") != NULL)
+        response = INVALID_IP;
+
+    return response;
+}
+
+static res auth_login(const char *username, const char *password, char stack)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -85,7 +113,7 @@ static void auth_login(const char *username, const char *password, char stack)
 
     sds challenge = get_challenge(curl, username, stack);
     if (challenge == NULL)
-        return;
+        return EMPTY_CHALLENGE;
 
     sds info = sdscatprintf(sdsempty(),
                             "{\"username\":\"%s\",\"password\":\"%s\",\"ip\":\"\",\"acid\":\"1\",\"enc_ver\":\"srun_bx1\"}",
@@ -118,10 +146,19 @@ static void auth_login(const char *username, const char *password, char stack)
     curl_easy_setopt(curl, CURLOPT_URL, stack == AUTH4 ? AUTH4_URL : AUTH6_URL);
     CURLcode success = curl_easy_perform(curl);
 
+    res response = UNKNOWN_ERR;
     if (success != CURLE_OK || strncmp(message, "login_ok", 8))
+    {
         fprintf(stderr, "Error: auth%d login\n\tMessage: %s\n", stack, message);
+
+        if (success == CURLE_OK)
+            response = check_response(message);
+    }
     else
+    {
         printf("Success: auth%d login\n", stack);
+        response = SUCCESS;
+    }
 
     sdsfree(full_encoded_info);
     sdsfree(full_password_md5);
@@ -137,9 +174,11 @@ static void auth_login(const char *username, const char *password, char stack)
     curl_free(url_encoded_password_md5);
     curl_slist_free_all(headers);
     curl_easy_cleanup(curl);
+
+    return response;
 }
 
-TUNET_DLLEXPORT void net_login(const char *username, const char *password)
+TUNET_DLLEXPORT res net_login(const char *username, const char *password)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -159,19 +198,35 @@ TUNET_DLLEXPORT void net_login(const char *username, const char *password)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
     CURLcode success = curl_easy_perform(curl);
 
+    res response = UNKNOWN_ERR;
     if (success != CURLE_OK || strncmp(message, "Login is successful", 19))
+    {
         fprintf(stderr, "Error: net login\n\tMessage: %s\n", message);
+
+        if (success == CURLE_OK)
+        {
+            if (!strncmp(message, "IP has been online", 18))
+                response = ALREADY_ONLINE;
+            else
+                response = check_response(message);
+        }
+    }
     else
+    {
         printf("Success: net login\n");
+        response = SUCCESS;
+    }
 
     sdsfree(composed_url);
     sdsfree(password_md5);
     sdsfree(message);
     curl_slist_free_all(headers);
     curl_easy_cleanup(curl);
+
+    return response;
 }
 
-static void logout(char stack)
+static res logout(char stack)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -188,50 +243,69 @@ static void logout(char stack)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
     CURLcode success = curl_easy_perform(curl);
 
+    res response = UNKNOWN_ERR;
     if (stack == NET)
     {
         if (success != CURLE_OK || strncmp(message, "Logout is successful", 20))
+        {
             fprintf(stderr, "Error: net logout\n\tMessage: %s\n", message);
+
+            if (success == CURLE_OK)
+                response = check_response(message);
+        }
         else
+        {
             printf("Success: net logout\n");
+            response = SUCCESS;
+        }
     }
     else
     {
         if (success != CURLE_OK || strncmp(message, "logout_ok", 9))
+        {
             fprintf(stderr, "Error: auth%d logout\n\tMessage: %s\n", stack, message);
+
+            if (success == CURLE_OK)
+                response = check_response(message);
+        }
         else
+        {
             printf("Success: auth%d logout\n", stack);
+            response = SUCCESS;
+        }
     }
 
     sdsfree(composed_url);
     sdsfree(message);
     curl_slist_free_all(headers);
     curl_easy_cleanup(curl);
+
+    return response;
 }
 
-TUNET_DLLEXPORT void auth4_login(const char *username, const char *password)
+TUNET_DLLEXPORT res auth4_login(const char *username, const char *password)
 {
-    auth_login(username, password, AUTH4);
+    return auth_login(username, password, AUTH4);
 }
 
-TUNET_DLLEXPORT void auth6_login(const char *username, const char *password)
+TUNET_DLLEXPORT res auth6_login(const char *username, const char *password)
 {
-    auth_login(username, password, AUTH6);
+    return auth_login(username, password, AUTH6);
 }
 
-TUNET_DLLEXPORT void net_logout()
+TUNET_DLLEXPORT res net_logout()
 {
-    logout(NET);
+    return logout(NET);
 }
 
-TUNET_DLLEXPORT void auth4_logout()
+TUNET_DLLEXPORT res auth4_logout()
 {
-    logout(AUTH4);
+    return logout(AUTH4);
 }
 
-TUNET_DLLEXPORT void auth6_logout()
+TUNET_DLLEXPORT res auth6_logout()
 {
-    logout(AUTH6);
+    return logout(AUTH6);
 }
 
 TUNET_DLLEXPORT void tunet_init()
