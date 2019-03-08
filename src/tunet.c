@@ -63,6 +63,7 @@ static sds get_challenge(CURL *curl, const char *username, char stack)
     curl_easy_setopt(curl, CURLOPT_URL, composed_url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, challenge_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&challenge);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
     CURLcode success = curl_easy_perform(curl);
 
@@ -186,6 +187,7 @@ TUNET_DLLEXPORT res net_login(const char *username, const char *password)
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
 
     sds password_md5 = md5(password);
     sds composed_url = sdscatprintf(sdsempty(),
@@ -235,6 +237,7 @@ static res logout(char stack)
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
 
     sds composed_url = sdscatprintf(sdsempty(),
                                     "%s?action=logout",
