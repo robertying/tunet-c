@@ -63,8 +63,6 @@ static sds get_challenge(CURL *curl, const char *username, char stack)
     curl_easy_setopt(curl, CURLOPT_URL, composed_url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, challenge_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&challenge);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
-    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
     CURLcode success = curl_easy_perform(curl);
 
     if (success != CURLE_OK)
@@ -112,6 +110,7 @@ static res auth_login(const char *username, const char *password, char stack)
     headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 
     sds challenge = get_challenge(curl, username, stack);
     if (challenge == NULL)
@@ -146,7 +145,6 @@ static res auth_login(const char *username, const char *password, char stack)
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, sdslen(data));
     curl_easy_setopt(curl, CURLOPT_URL, stack == AUTH4 ? AUTH4_URL : AUTH6_URL);
-    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
     CURLcode success = curl_easy_perform(curl);
 
     res response = UNKNOWN_ERR;
@@ -188,6 +186,7 @@ TUNET_DLLEXPORT res net_login(const char *username, const char *password)
     headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 
     sds password_md5 = md5(password);
     sds composed_url = sdscatprintf(sdsempty(),
@@ -200,7 +199,6 @@ TUNET_DLLEXPORT res net_login(const char *username, const char *password)
     curl_easy_setopt(curl, CURLOPT_URL, composed_url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, auth_login_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
-    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
     CURLcode success = curl_easy_perform(curl);
 
     res response = UNKNOWN_ERR;
@@ -238,6 +236,7 @@ static res logout(char stack)
     headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 
     sds composed_url = sdscatprintf(sdsempty(),
                                     "%s?action=logout",
@@ -247,7 +246,6 @@ static res logout(char stack)
     curl_easy_setopt(curl, CURLOPT_URL, composed_url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, auth_login_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
-    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
     CURLcode success = curl_easy_perform(curl);
 
     res response = UNKNOWN_ERR;
