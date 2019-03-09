@@ -1,5 +1,5 @@
 lib_LTLIBRARIES = libtunet.la
-libtunet_la_CPPFLAGS = -I$(srcdir)/../lib  -I$(srcdir)
+libtunet_la_CPPFLAGS = -I$(srcdir)/../lib  -I$(srcdir) -I$(srcdir)/../tidy-html5/include
 libtunet_la_SOURCES = tunet.c tunet.h
 libtunet_la_LIBADD = ../lib/libportal.la $(CRYPTOLIB) $(CURLLIB)
 if WINDOWS
