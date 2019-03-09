@@ -133,7 +133,9 @@ static res auth_login(const char *username, const char *password, char stack)
     headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+#ifdef __ANDROID__
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
 
     sds challenge = get_challenge(curl, username, stack);
     if (challenge == NULL)
@@ -209,7 +211,9 @@ TUNET_DLLEXPORT res net_login(const char *username, const char *password)
     headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+#ifdef __ANDROID__
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
 
     sds password_md5 = md5(password);
     sds composed_url = sdscatprintf(sdsempty(),
@@ -259,7 +263,9 @@ static res logout(char stack)
     headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+#ifdef __ANDROID__
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
 
     sds composed_url = sdscatprintf(sdsempty(),
                                     "%s?action=logout",
@@ -400,7 +406,9 @@ TUNET_DLLEXPORT double get_usage()
 {
     CURL *curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+#ifdef __ANDROID__
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
 
     sds message = sdsempty();
     curl_easy_setopt(curl, CURLOPT_URL, NET_USER_INFO_URL);
@@ -504,7 +512,9 @@ TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *pass
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+#ifdef __ANDROID__
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
 
     usereg_login(curl, username, password);
     char *results = get_sessions(curl);
@@ -523,7 +533,9 @@ TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *passw
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+#ifdef __ANDROID__
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
 
     usereg_login(curl, username, password);
     drop_session(curl, session_id);
@@ -546,7 +558,9 @@ TUNET_DLLEXPORT double usereg_get_usage_detail(const char *username, const char 
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+#ifdef __ANDROID__
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
 
     usereg_login(curl, username, password);
     double sum = get_usage_detail(curl, start_time, end_time);

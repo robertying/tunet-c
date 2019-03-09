@@ -47,7 +47,9 @@ extern "C"
         "ALREADY_ONLINE",
         "INVALID_IP"};
 
+#ifdef __ANDROID__
     extern char *CA_BUNDLE_PATH;
+#endif
     extern int sessions_count;
 
     TUNET_DLLEXPORT void tunet_init();
