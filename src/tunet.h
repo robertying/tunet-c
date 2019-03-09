@@ -48,6 +48,7 @@ extern "C"
         "INVALID_IP"};
 
     extern char *CA_BUNDLE_PATH;
+    extern int sessions_count;
 
     TUNET_DLLEXPORT void tunet_init();
     TUNET_DLLEXPORT void tunet_cleanup();
@@ -57,6 +58,11 @@ extern "C"
     TUNET_DLLEXPORT res net_logout();
     TUNET_DLLEXPORT res auth4_logout();
     TUNET_DLLEXPORT res auth6_logout();
+    TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *password);
+    TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *password, const char *session_id);
+    TUNET_DLLEXPORT double usereg_get_usage();
+    TUNET_DLLEXPORT double usereg_get_usage_detail(const char *username, const char *password,
+                                                   const char *start_time, const char *end_time);
 
 #ifdef __cplusplus
 }

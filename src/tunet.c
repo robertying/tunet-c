@@ -5,9 +5,12 @@
 #include <curl/curl.h>
 #include <cJSON.h>
 #include <sds.h>
+#include <tidy.h>
+#include <tidybuffio.h>
 
 #include "tunet.h"
 #include "../lib/portal.h"
+#include "../lib/parser.h"
 
 #define NET 0
 #define AUTH4 4
@@ -18,6 +21,11 @@ static const char *AUTH4_URL = "https://auth4.tsinghua.edu.cn/cgi-bin/srun_porta
 static const char *AUTH6_URL = "https://auth6.tsinghua.edu.cn/cgi-bin/srun_portal";
 static const char *AUTH4_CHALLENGE_URL = "https://auth4.tsinghua.edu.cn/cgi-bin/get_challenge";
 static const char *AUTH6_CHALLENGE_URL = "https://auth6.tsinghua.edu.cn/cgi-bin/get_challenge";
+
+static const char *USEREG_LOGIN_URL = "https://usereg.tsinghua.edu.cn/do.php";
+static const char *USEREG_SESSIONS_URL = "https://usereg.tsinghua.edu.cn/online_user_ipv4.php";
+static const char *NET_USER_INFO_URL = "https://net.tsinghua.edu.cn/rad_user_info.php";
+static const char *USEREG_USER_DETAIL_URL = "https://usereg.tsinghua.edu.cn/user_detail_list.php";
 
 static size_t challenge_callback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -50,6 +58,21 @@ static size_t auth_login_callback(void *contents, size_t size, size_t nmemb, voi
     int length = sdslen(*message);
 
     return length;
+}
+
+static size_t result_callback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    size_t length = size * nmemb;
+    sds *message = (sds *)userp;
+    *message = sdscat(*message, contents);
+    return length;
+}
+
+static size_t write_to_tidy_callback(char *in, size_t size, size_t nmemb, TidyBuffer *out)
+{
+    size_t r = size * nmemb;
+    tidyBufAppend(out, in, r);
+    return r;
 }
 
 static sds get_challenge(CURL *curl, const char *username, char stack)
@@ -288,6 +311,166 @@ static res logout(char stack)
     return response;
 }
 
+TUNET_DLLEXPORT res usereg_login(CURL *curl, const char *username, const char *password)
+{
+    sds password_md5 = md5(password);
+    sds data = sdscatprintf(sdsempty(),
+                            "action=login&user_login_name=%s&user_password=%s",
+                            username, password_md5);
+    sds message = sdsempty();
+
+    curl_easy_setopt(curl, CURLOPT_URL, USEREG_LOGIN_URL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, result_callback);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, sdslen(data));
+    CURLcode success = curl_easy_perform(curl);
+
+    res response = UNKNOWN_ERR;
+    if (success != CURLE_OK)
+    {
+        fprintf(stderr, "Error: usereg login\n");
+    }
+    if (strncmp(message, "ok", 2))
+    {
+        response = WRONG_CREDENTIAL;
+    }
+    else
+    {
+        response = SUCCESS;
+    }
+
+    sdsfree(data);
+    sdsfree(password_md5);
+    sdsfree(message);
+
+    return response;
+}
+
+TUNET_DLLEXPORT char *get_sessions(CURL *curl)
+{
+    TidyDoc tdoc = tidyCreate();
+    TidyBuffer docbuf = {0};
+    tidyOptSetBool(tdoc, TidyShowWarnings, no);
+    tidyOptSetBool(tdoc, TidyQuiet, yes);
+    tidyBufInit(&docbuf);
+
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&docbuf);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_tidy_callback);
+    curl_easy_setopt(curl, CURLOPT_URL, USEREG_SESSIONS_URL);
+    CURLcode success = curl_easy_perform(curl);
+
+    if (success != CURLE_OK)
+    {
+        fprintf(stderr, "Error: usereg get sessions\n");
+        return NULL;
+    }
+
+    cJSON *results = cJSON_CreateArray();
+    tidyParseBuffer(tdoc, &docbuf);
+    parse_sessions_page(tdoc, tidyGetRoot(tdoc), results);
+    sessions_count = 0;
+
+    char *string = cJSON_PrintUnformatted(results);
+
+    cJSON_Delete(results);
+    tidyBufFree(&docbuf);
+    tidyRelease(tdoc);
+
+    return string;
+}
+
+TUNET_DLLEXPORT void drop_session(CURL *curl, const char *id)
+{
+    sds data = sdscatprintf(sdsempty(), "action=drops&user_ip=%s,", id);
+    sds message = sdsempty();
+
+    curl_easy_setopt(curl, CURLOPT_URL, USEREG_SESSIONS_URL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, result_callback);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, sdslen(data));
+    CURLcode success = curl_easy_perform(curl);
+
+    sdsfree(message);
+    sdsfree(data);
+}
+
+TUNET_DLLEXPORT double get_usage()
+{
+    CURL *curl = curl_easy_init();
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+
+    sds message = sdsempty();
+    curl_easy_setopt(curl, CURLOPT_URL, NET_USER_INFO_URL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, result_callback);
+    CURLcode success = curl_easy_perform(curl);
+
+    int begin = 0;
+    int end = 0;
+    int i;
+    int count = 0;
+    int len = sdslen(message);
+    for (i = 0; i < len; i++)
+    {
+        if (message[i] == ',')
+            count++;
+        if (count == 6)
+            begin = i + 1;
+        if (count == 7)
+        {
+            end = i;
+            break;
+        }
+    }
+
+    sdsrange(message, begin, end);
+    double usage = strtod(message, NULL);
+    printf("%s\n", message);
+
+    sdsfree(message);
+    curl_easy_cleanup(curl);
+
+    return usage;
+}
+
+TUNET_DLLEXPORT double get_usage_detail(CURL *curl, const char *start_time, const char *end_time)
+{
+    TidyDoc tdoc = tidyCreate();
+    TidyBuffer docbuf = {0};
+    tidyOptSetBool(tdoc, TidyShowWarnings, no);
+    tidyOptSetBool(tdoc, TidyQuiet, yes);
+    tidyBufInit(&docbuf);
+
+    sds composed_url = sdscatprintf(sdsempty(),
+                                    "%s?action=query&start_time=%s&end_time=%s&offset=10000",
+                                    USEREG_USER_DETAIL_URL,
+                                    start_time,
+                                    end_time);
+
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&docbuf);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_tidy_callback);
+    curl_easy_setopt(curl, CURLOPT_URL, composed_url);
+    CURLcode success = curl_easy_perform(curl);
+
+    if (success != CURLE_OK)
+    {
+        fprintf(stderr, "Error: usereg get user detail\n");
+    }
+
+    tidyParseBuffer(tdoc, &docbuf);
+    double sum = 0;
+    parse_user_detail_page(tdoc, tidyGetRoot(tdoc), &sum);
+
+    tidyBufFree(&docbuf);
+    tidyRelease(tdoc);
+    sdsfree(composed_url);
+
+    return sum;
+}
+
 TUNET_DLLEXPORT res auth4_login(const char *username, const char *password)
 {
     return auth_login(username, password, AUTH4);
@@ -311,6 +494,67 @@ TUNET_DLLEXPORT res auth4_logout()
 TUNET_DLLEXPORT res auth6_logout()
 {
     return logout(AUTH6);
+}
+
+TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *password)
+{
+    CURL *curl = curl_easy_init();
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+    curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+
+    usereg_login(curl, username, password);
+    char *results = get_sessions(curl);
+
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+
+    return results;
+}
+
+TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *password, const char *session_id)
+{
+    CURL *curl = curl_easy_init();
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+    curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+
+    usereg_login(curl, username, password);
+    drop_session(curl, session_id);
+
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+}
+
+TUNET_DLLEXPORT double usereg_get_usage()
+{
+    return get_usage();
+}
+
+TUNET_DLLEXPORT double usereg_get_usage_detail(const char *username, const char *password,
+                                               const char *start_time, const char *end_time)
+{
+    CURL *curl = curl_easy_init();
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+    curl_easy_setopt(curl, CURLOPT_COOKIEFILE, "");
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+
+    usereg_login(curl, username, password);
+    double sum = get_usage_detail(curl, start_time, end_time);
+
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+
+    return sum;
 }
 
 TUNET_DLLEXPORT void tunet_init()
