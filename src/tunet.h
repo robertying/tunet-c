@@ -62,9 +62,9 @@ extern "C"
     TUNET_DLLEXPORT res auth6_logout();
     TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *password);
     TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *password, const char *session_id);
-    TUNET_DLLEXPORT double usereg_get_usage();
-    TUNET_DLLEXPORT double usereg_get_usage_detail(const char *username, const char *password,
-                                                   const char *start_time, const char *end_time);
+    TUNET_DLLEXPORT float usereg_get_usage();
+    TUNET_DLLEXPORT float usereg_get_usage_detail(const char *username, const char *password,
+                                                  const char *start_time, const char *end_time);
 
 #ifdef __cplusplus
 }

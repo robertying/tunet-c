@@ -78,7 +78,7 @@ static size_t write_to_tidy_callback(char *in, size_t size, size_t nmemb, TidyBu
 static sds get_challenge(CURL *curl, const char *username, char stack)
 {
     sds composed_url = sdscatprintf(sdsempty(),
-                                    "%s?username=%s&double_stack=1&ip&callback=callback",
+                                    "%s?username=%s&float_stack=1&ip&callback=callback",
                                     stack == AUTH4 ? AUTH4_CHALLENGE_URL : AUTH6_CHALLENGE_URL,
                                     username);
     sds challenge;
@@ -158,7 +158,7 @@ static res auth_login(const char *username, const char *password, char stack)
     sds chksum = sha1(combined);
 
     sds data = sdscatprintf(sdsempty(),
-                            "info=%s&action=login&double_stack=1&ac_id=1&n=200&type=1&username=%s&password=%s&chksum=%s",
+                            "info=%s&action=login&float_stack=1&ac_id=1&n=200&type=1&username=%s&password=%s&chksum=%s",
                             url_encoded_info,
                             username,
                             url_encoded_password_md5,
@@ -402,7 +402,7 @@ TUNET_DLLEXPORT void drop_session(CURL *curl, const char *id)
     sdsfree(data);
 }
 
-TUNET_DLLEXPORT double get_usage()
+TUNET_DLLEXPORT float get_usage()
 {
     CURL *curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
@@ -435,7 +435,7 @@ TUNET_DLLEXPORT double get_usage()
     }
 
     sdsrange(message, begin, end);
-    double usage = strtod(message, NULL);
+    float usage = strtod(message, NULL);
     printf("%s\n", message);
 
     sdsfree(message);
@@ -444,7 +444,7 @@ TUNET_DLLEXPORT double get_usage()
     return usage;
 }
 
-TUNET_DLLEXPORT double get_usage_detail(CURL *curl, const char *start_time, const char *end_time)
+TUNET_DLLEXPORT float get_usage_detail(CURL *curl, const char *start_time, const char *end_time)
 {
     TidyDoc tdoc = tidyCreate();
     TidyBuffer docbuf = {0};
@@ -469,7 +469,7 @@ TUNET_DLLEXPORT double get_usage_detail(CURL *curl, const char *start_time, cons
     }
 
     tidyParseBuffer(tdoc, &docbuf);
-    double sum = 0;
+    float sum = 0;
     parse_user_detail_page(tdoc, tidyGetRoot(tdoc), &sum);
 
     tidyBufFree(&docbuf);
@@ -544,13 +544,13 @@ TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *passw
     curl_easy_cleanup(curl);
 }
 
-TUNET_DLLEXPORT double usereg_get_usage()
+TUNET_DLLEXPORT float usereg_get_usage()
 {
     return get_usage();
 }
 
-TUNET_DLLEXPORT double usereg_get_usage_detail(const char *username, const char *password,
-                                               const char *start_time, const char *end_time)
+TUNET_DLLEXPORT float usereg_get_usage_detail(const char *username, const char *password,
+                                              const char *start_time, const char *end_time)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -563,7 +563,7 @@ TUNET_DLLEXPORT double usereg_get_usage_detail(const char *username, const char 
 #endif
 
     usereg_login(curl, username, password);
-    double sum = get_usage_detail(curl, start_time, end_time);
+    float sum = get_usage_detail(curl, start_time, end_time);
 
     curl_slist_free_all(headers);
     curl_easy_cleanup(curl);

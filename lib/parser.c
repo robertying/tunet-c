@@ -9,7 +9,7 @@ typedef char bool;
 #define true 1
 #define false 0
 
-static double parse_usage_with_unit(const char *usage)
+static float parse_usage_with_unit(const char *usage)
 {
     if (usage == NULL)
         return 0;
@@ -128,7 +128,7 @@ void parse_sessions_page(TidyDoc doc, TidyNode tnod, cJSON *results)
     }
 }
 
-void parse_user_detail_page(TidyDoc doc, TidyNode tnod, double *sum)
+void parse_user_detail_page(TidyDoc doc, TidyNode tnod, float *sum)
 {
     TidyNode child;
 

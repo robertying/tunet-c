@@ -6,6 +6,6 @@
 #include <tidybuffio.h>
 
 void parse_sessions_page(TidyDoc doc, TidyNode tnod, cJSON *results);
-void parse_user_detail_page(TidyDoc doc, TidyNode tnod, double *sum);
+void parse_user_detail_page(TidyDoc doc, TidyNode tnod, float *sum);
 
 #endif
