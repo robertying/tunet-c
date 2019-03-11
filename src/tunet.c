@@ -317,7 +317,7 @@ static res logout(char stack)
     return response;
 }
 
-TUNET_DLLEXPORT res usereg_login(CURL *curl, const char *username, const char *password)
+static res usereg_login_s(CURL *curl, const char *username, const char *password)
 {
     sds password_md5 = md5(password);
     sds data = sdscatprintf(sdsempty(),
@@ -349,6 +349,25 @@ TUNET_DLLEXPORT res usereg_login(CURL *curl, const char *username, const char *p
     sdsfree(data);
     sdsfree(password_md5);
     sdsfree(message);
+
+    return response;
+}
+
+TUNET_DLLEXPORT res usereg_login(const char *username, const char *password)
+{
+    CURL *curl = curl_easy_init();
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+#ifdef __ANDROID__
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
+
+    res response = usereg_login_s(curl, username, password);
+
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
 
     return response;
 }
@@ -516,7 +535,7 @@ TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *pass
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 #endif
 
-    usereg_login(curl, username, password);
+    usereg_login_s(curl, username, password);
     char *results = get_sessions(curl);
 
     curl_slist_free_all(headers);
@@ -537,7 +556,7 @@ TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *passw
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 #endif
 
-    usereg_login(curl, username, password);
+    usereg_login_s(curl, username, password);
     drop_session(curl, session_id);
 
     curl_slist_free_all(headers);
@@ -562,7 +581,7 @@ TUNET_DLLEXPORT float usereg_get_usage_detail(const char *username, const char *
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 #endif
 
-    usereg_login(curl, username, password);
+    usereg_login_s(curl, username, password);
     float sum = get_usage_detail(curl, start_time, end_time);
 
     curl_slist_free_all(headers);

@@ -60,6 +60,7 @@ extern "C"
     TUNET_DLLEXPORT res net_logout();
     TUNET_DLLEXPORT res auth4_logout();
     TUNET_DLLEXPORT res auth6_logout();
+    TUNET_DLLEXPORT res usereg_login(const char *username, const char *password);
     TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *password);
     TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *password, const char *session_id);
     TUNET_DLLEXPORT float usereg_get_usage();
