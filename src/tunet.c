@@ -337,7 +337,7 @@ static res usereg_login_s(CURL *curl, const char *username, const char *password
     {
         fprintf(stderr, "Error: usereg login\n");
     }
-    if (strncmp(message, "ok", 2))
+    else if (strncmp(message, "ok", 2))
     {
         response = WRONG_CREDENTIAL;
     }
