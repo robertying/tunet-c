@@ -444,9 +444,9 @@ TUNET_DLLEXPORT float get_usage()
     {
         if (message[i] == ',')
             count++;
-        if (count == 6)
+        if (begin == 0 && count == 6)
             begin = i + 1;
-        if (count == 7)
+        if (end == 0 && count == 7)
         {
             end = i;
             break;
