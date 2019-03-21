@@ -459,7 +459,7 @@ TUNET_DLLEXPORT void drop_session(CURL *curl, const char *id)
     sdsfree(data);
 }
 
-TUNET_DLLEXPORT float get_usage()
+float get_usage()
 {
     CURL *curl = curl_easy_init();
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
@@ -499,6 +499,48 @@ TUNET_DLLEXPORT float get_usage()
     curl_easy_cleanup(curl);
 
     return usage;
+}
+
+float get_balance()
+{
+    CURL *curl = curl_easy_init();
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3L);
+#ifdef __ANDROID__
+    curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
+#endif
+
+    sds message = sdsempty();
+    curl_easy_setopt(curl, CURLOPT_URL, NET_USER_INFO_URL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&message);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, result_callback);
+    CURLcode success = curl_easy_perform(curl);
+
+    int begin = 0;
+    int end = 0;
+    int i;
+    int count = 0;
+    int len = sdslen(message);
+    for (i = 0; i < len; i++)
+    {
+        if (message[i] == ',')
+            count++;
+        if (begin == 0 && count == 11)
+            begin = i + 1;
+        if (end == 0 && count == 12)
+        {
+            end = i;
+            break;
+        }
+    }
+
+    sdsrange(message, begin, end);
+    float balance = strtod(message, NULL);
+    printf("%s\n", message);
+
+    sdsfree(message);
+    curl_easy_cleanup(curl);
+
+    return balance;
 }
 
 TUNET_DLLEXPORT float get_usage_detail(CURL *curl, const char *start_time, const char *end_time)
@@ -604,6 +646,11 @@ TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *passw
 TUNET_DLLEXPORT float usereg_get_usage()
 {
     return get_usage();
+}
+
+TUNET_DLLEXPORT float usereg_get_balance()
+{
+    return get_balance();
 }
 
 TUNET_DLLEXPORT float usereg_get_usage_detail(const char *username, const char *password,

@@ -64,6 +64,7 @@ extern "C"
     TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *password);
     TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *password, const char *session_id);
     TUNET_DLLEXPORT float usereg_get_usage();
+    TUNET_DLLEXPORT float usereg_get_balance();
     TUNET_DLLEXPORT float usereg_get_usage_detail(const char *username, const char *password,
                                                   const char *start_time, const char *end_time);
 
