@@ -47,7 +47,7 @@ static const char *session_table_head[] = {
     "balance",
     "downRate",
     "upRate",
-    "devide",
+    "device",
     "availableUsage",
     "availableTime"};
 
