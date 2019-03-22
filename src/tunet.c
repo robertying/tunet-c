@@ -126,40 +126,6 @@ static res check_response(sds message)
     return response;
 }
 
-static sds get_ac_id(CURL *curl)
-{
-    curl_easy_setopt(curl, CURLOPT_URL, AUTH4_URL);
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-    CURLcode response = curl_easy_perform(curl);
-
-    if (response != CURLE_OK)
-    {
-        fprintf(stderr, "Error: get ac_id\n");
-        return sdsnew("1");
-    }
-    else
-    {
-        char *url;
-        response = curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
-        if ((response == CURLE_OK) && url)
-        {
-            char *substr_start = strstr(url, "ac_id");
-            int start = substr_start - url + 6;
-            char *substr_end = strstr(url, "&");
-            int end = substr_end - url;
-
-            sds sds_url = sdsnew(url);
-            sdsrange(sds_url, start, end);
-
-            return sds_url;
-        }
-        else
-        {
-            return sdsnew("1");
-        }
-    }
-}
-
 static res auth_login(const char *username, const char *password, char stack)
 {
     CURL *curl = curl_easy_init();
@@ -174,7 +140,7 @@ static res auth_login(const char *username, const char *password, char stack)
     sds challenge = get_challenge(curl, username, stack);
     if (challenge == NULL)
         return EMPTY_CHALLENGE;
-    sds ac_id = get_ac_id(curl);
+    sds ac_id = sdsnew("1");
 
     sds info = sdscatprintf(sdsempty(),
                             "{\"username\":\"%s\",\"password\":\"%s\",\"ip\":\"\",\"acid\":\"%s\",\"enc_ver\":\"srun_bx1\"}",
