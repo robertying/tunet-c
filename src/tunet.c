@@ -144,9 +144,9 @@ static res auth_login(const char *username, const char *password, char stack)
 
     sds info = sdscatprintf(sdsempty(),
                             "{\"username\":\"%s\",\"password\":\"%s\",\"ip\":\"\",\"acid\":\"%s\",\"enc_ver\":\"srun_bx1\"}",
-                            ac_id,
                             username,
-                            password);
+                            password,
+                            ac_id);
     sds encoded_info = x_encode(info, challenge);
     sds full_encoded_info = sdscatprintf(sdsempty(), "{SRBX1}%s", encoded_info);
     char *url_encoded_info = curl_easy_escape(curl, full_encoded_info, sdslen(full_encoded_info));
