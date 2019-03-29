@@ -193,7 +193,7 @@ static res auth_login(const char *username, const char *password, char stack)
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 #endif
 
-    sds ac_id = sdsnew("2");
+    sds ac_id = get_ac_id(curl);
 
     sds challenge = get_challenge(curl, username, stack);
     if (challenge == NULL)
