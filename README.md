@@ -2,7 +2,7 @@
 
 C cli and library for Tsinghua University network authentication.
 
-Support `auth4`, `auth6`, `net`.
+Support `auth4`, `auth6`, `net`, including wireless `Tsinghua-5G`, `Tsinghua` and `Tsinghua-IPv4`.
 
 Installation on `OpenWrt` is also available!
 
