@@ -27,12 +27,13 @@ extern "C"
         SUCCESS = 1,
         UNKNOWN_ERR,
         EMPTY_CHALLENGE,
-        WRONG_CREDENTIAL,   // E2553 E2531 E5992
-        OUT_OF_BALANCE,     // E3004 E2616
-        TOO_SHORT_INTERVAL, // E2532
-        TOO_MANY_ATTEMPTS,  // E2533
-        ALREADY_ONLINE,     // E2620
-        INVALID_IP,         // E2833
+        WRONG_CREDENTIAL,    // E2553 E2531 E5992
+        OUT_OF_BALANCE,      // E3004 E2616
+        TOO_SHORT_INTERVAL,  // E2532
+        TOO_MANY_ATTEMPTS,   // E2533
+        ALREADY_ONLINE,      // E2620
+        INVALID_IP,          // E2833
+        POSSIBLY_WRONG_ACID, // sign_error
     } res;
 
     static const char *res_string[] = {
@@ -45,7 +46,8 @@ extern "C"
         "TOO_SHORT_INTERVAL",
         "TOO_MANY_ATTEMPTS",
         "ALREADY_ONLINE",
-        "INVALID_IP"};
+        "INVALID_IP",
+        "POSSIBLY_WRONG_ACID"};
 
 #ifdef __ANDROID__
     extern char *CA_BUNDLE_PATH;

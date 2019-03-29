@@ -108,6 +108,9 @@ static res check_response(sds message)
 {
     res response = UNKNOWN_ERR;
 
+    if (!strcmp(message, "sign_error"))
+        response = POSSIBLY_WRONG_ACID;
+
     if (strstr(message, "E2553") != NULL ||
         strstr(message, "E2531") != NULL ||
         strstr(message, "E5992") != NULL)
@@ -190,7 +193,7 @@ static res auth_login(const char *username, const char *password, char stack)
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 #endif
 
-    sds ac_id = get_ac_id(curl);
+    sds ac_id = sdsnew("2");
 
     sds challenge = get_challenge(curl, username, stack);
     if (challenge == NULL)
