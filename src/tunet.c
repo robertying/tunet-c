@@ -16,7 +16,8 @@
 #define AUTH4 4
 #define AUTH6 6
 
-static const char *NET_URL = "https://net.tsinghua.edu.cn/do_login.php";
+static const char *NET_URL = "http://net.tsinghua.edu.cn";
+static const char *NET_LOGIN_URL = "https://net.tsinghua.edu.cn/do_login.php";
 static const char *AUTH4_URL = "https://auth4.tsinghua.edu.cn/cgi-bin/srun_portal";
 static const char *AUTH6_URL = "https://auth6.tsinghua.edu.cn/cgi-bin/srun_portal";
 static const char *AUTH4_CHALLENGE_URL = "https://auth4.tsinghua.edu.cn/cgi-bin/get_challenge";
@@ -26,6 +27,11 @@ static const char *USEREG_LOGIN_URL = "https://usereg.tsinghua.edu.cn/do.php";
 static const char *USEREG_SESSIONS_URL = "https://usereg.tsinghua.edu.cn/online_user_ipv4.php";
 static const char *NET_USER_INFO_URL = "https://net.tsinghua.edu.cn/rad_user_info.php";
 static const char *USEREG_USER_DETAIL_URL = "https://usereg.tsinghua.edu.cn/user_detail_list.php";
+
+static size_t default_callback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    return size * nmemb;
+}
 
 static size_t challenge_callback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -126,6 +132,53 @@ static res check_response(sds message)
     return response;
 }
 
+static sds get_ac_id(CURL *curl)
+{
+    curl_easy_setopt(curl, CURLOPT_URL, NET_URL);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, default_callback);
+    CURLcode response = curl_easy_perform(curl);
+
+    if (response != CURLE_OK)
+    {
+        fprintf(stderr, "Error: get ac_id\n");
+        return sdsnew("1");
+    }
+    else
+    {
+        char *url;
+        response = curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
+        if ((response == CURLE_OK) && url)
+        {
+            char *substr_start = strstr(url, "index_");
+            int start = substr_start - url + 6;
+            char *substr_end = strstr(url, ".html");
+            int end = substr_end - url - 1;
+
+            sds sds_url = sdsnew(url);
+            sdsrange(sds_url, start, end);
+
+            int len = strlen(sds_url);
+            if (len == 0)
+                return sdsnew("1");
+
+            int i;
+            for (i = 0; i < len; i++)
+            {
+                if (!isdigit(sds_url[i]))
+                {
+                    return sdsnew("1");
+                }
+            }
+            return sds_url;
+        }
+        else
+        {
+            return sdsnew("1");
+        }
+    }
+}
+
 static res auth_login(const char *username, const char *password, char stack)
 {
     CURL *curl = curl_easy_init();
@@ -137,10 +190,11 @@ static res auth_login(const char *username, const char *password, char stack)
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 #endif
 
+    sds ac_id = get_ac_id(curl);
+
     sds challenge = get_challenge(curl, username, stack);
     if (challenge == NULL)
         return EMPTY_CHALLENGE;
-    sds ac_id = sdsnew("1");
 
     sds info = sdscatprintf(sdsempty(),
                             "{\"username\":\"%s\",\"password\":\"%s\",\"ip\":\"\",\"acid\":\"%s\",\"enc_ver\":\"srun_bx1\"}",
@@ -222,7 +276,7 @@ TUNET_DLLEXPORT res net_login(const char *username, const char *password)
     sds password_md5 = md5(password);
     sds composed_url = sdscatprintf(sdsempty(),
                                     "%s?action=login&username=%s&password={MD5_HEX}%s&ac_id=1",
-                                    NET_URL,
+                                    NET_LOGIN_URL,
                                     username,
                                     password_md5);
 
@@ -273,7 +327,7 @@ static res logout(char stack)
 
     sds composed_url = sdscatprintf(sdsempty(),
                                     "%s?action=logout",
-                                    stack == NET ? NET_URL : stack == AUTH4 ? AUTH4_URL : AUTH6_URL);
+                                    stack == NET ? NET_LOGIN_URL : stack == AUTH4 ? AUTH4_URL : AUTH6_URL);
 
     sds message;
     curl_easy_setopt(curl, CURLOPT_URL, composed_url);
