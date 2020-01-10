@@ -1,7 +1,7 @@
 AC_INIT([tunet], [3.0.0], [https://github.com/robertying/tunet-c])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign -Wall])
 
 AC_CHECK_LIB([crypto], [SHA1], [CRYPTOLIB=-lcrypto], [AC_MSG_ERROR([Cannot find libopenssl])])
 AC_CHECK_LIB([curl], [curl_easy_setopt], [CURLLIB=-lcurl], [AC_MSG_ERROR([Cannot find libcurl])])
