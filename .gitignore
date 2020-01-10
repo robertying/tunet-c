@@ -125,3 +125,6 @@ tunet*
 
 # jni
 !tunet-jni.c
+
+# OpenWrt
+!openwrt/Makefile
