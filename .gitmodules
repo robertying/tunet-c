@@ -7,14 +7,3 @@
 [submodule "cJSON"]
 	path = cJSON
 	url = https://github.com/DaveGamble/cJSON.git
-[submodule "openssl"]
-	path = openssl
-	url = https://github.com/openssl/openssl.git
-	ignore = dirty
-[submodule "curl"]
-	path = curl
-	url = https://github.com/curl/curl.git
-	ignore = dirty
-[submodule "tidy-html5"]
-	path = tidy-html5
-	url = https://github.com/robertying/tidy-html5.git
