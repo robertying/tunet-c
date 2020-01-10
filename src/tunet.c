@@ -265,7 +265,7 @@ static res auth_login(const char *username, const char *password, char stack)
     return response;
 }
 
-TUNET_DLLEXPORT res net_login(const char *username, const char *password)
+res net_login(const char *username, const char *password)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -414,7 +414,7 @@ static res usereg_login_s(CURL *curl, const char *username, const char *password
     return response;
 }
 
-TUNET_DLLEXPORT res usereg_login(const char *username, const char *password)
+res usereg_login(const char *username, const char *password)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -433,7 +433,7 @@ TUNET_DLLEXPORT res usereg_login(const char *username, const char *password)
     return response;
 }
 
-TUNET_DLLEXPORT char *get_sessions(CURL *curl)
+char *get_sessions(CURL *curl)
 {
     TidyDoc tdoc = tidyCreate();
     TidyBuffer docbuf = {0};
@@ -466,7 +466,7 @@ TUNET_DLLEXPORT char *get_sessions(CURL *curl)
     return string;
 }
 
-TUNET_DLLEXPORT void drop_session(CURL *curl, const char *id)
+void drop_session(CURL *curl, const char *id)
 {
     sds data = sdscatprintf(sdsempty(), "action=drops&user_ip=%s,", id);
     sds message = sdsempty();
@@ -566,7 +566,7 @@ float get_balance()
     return balance;
 }
 
-TUNET_DLLEXPORT float get_usage_detail(CURL *curl, const char *start_time, const char *end_time)
+float get_usage_detail(CURL *curl, const char *start_time, const char *end_time)
 {
     TidyDoc tdoc = tidyCreate();
     TidyBuffer docbuf = {0};
@@ -601,32 +601,32 @@ TUNET_DLLEXPORT float get_usage_detail(CURL *curl, const char *start_time, const
     return sum;
 }
 
-TUNET_DLLEXPORT res auth4_login(const char *username, const char *password)
+res auth4_login(const char *username, const char *password)
 {
     return auth_login(username, password, AUTH4);
 }
 
-TUNET_DLLEXPORT res auth6_login(const char *username, const char *password)
+res auth6_login(const char *username, const char *password)
 {
     return auth_login(username, password, AUTH6);
 }
 
-TUNET_DLLEXPORT res net_logout()
+res net_logout()
 {
     return logout(NET);
 }
 
-TUNET_DLLEXPORT res auth4_logout()
+res auth4_logout()
 {
     return logout(AUTH4);
 }
 
-TUNET_DLLEXPORT res auth6_logout()
+res auth6_logout()
 {
     return logout(AUTH6);
 }
 
-TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *password)
+char *usereg_get_sessions(const char *username, const char *password)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -647,7 +647,7 @@ TUNET_DLLEXPORT char *usereg_get_sessions(const char *username, const char *pass
     return results;
 }
 
-TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *password, const char *session_id)
+void usereg_drop_session(const char *username, const char *password, const char *session_id)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -666,18 +666,18 @@ TUNET_DLLEXPORT void usereg_drop_session(const char *username, const char *passw
     curl_easy_cleanup(curl);
 }
 
-TUNET_DLLEXPORT float usereg_get_usage()
+float usereg_get_usage()
 {
     return get_usage();
 }
 
-TUNET_DLLEXPORT float usereg_get_balance()
+float usereg_get_balance()
 {
     return get_balance();
 }
 
-TUNET_DLLEXPORT float usereg_get_usage_detail(const char *username, const char *password,
-                                              const char *start_time, const char *end_time)
+float usereg_get_usage_detail(const char *username, const char *password,
+                              const char *start_time, const char *end_time)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -698,12 +698,12 @@ TUNET_DLLEXPORT float usereg_get_usage_detail(const char *username, const char *
     return sum;
 }
 
-TUNET_DLLEXPORT void tunet_init()
+void tunet_init()
 {
     curl_global_init(CURL_GLOBAL_ALL);
 }
 
-TUNET_DLLEXPORT void tunet_cleanup()
+void tunet_cleanup()
 {
     curl_global_cleanup();
 }
