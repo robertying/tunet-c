@@ -32,7 +32,7 @@ endef
 
 define Package/libtunet
   $(call Package/tunet/Default)
-  DEPENDS:= +libopenssl +libcurl
+  DEPENDS:= +libopenssl +libcurl +libtidys
 endef
 
 define Package/tunet/install
