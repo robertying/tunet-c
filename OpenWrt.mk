@@ -1,15 +1,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tunet
-PKG_VERSION:=1.1.0
+PKG_VERSION:=3.0.0
 PKG_RELEASE:=1
 
-PKG_MAINTAINER:=Robert Ying <yingrui205@gmail.com>
+PKG_MAINTAINER:=Rui Ying <yingrui205@gmail.com>
 PKG_LICENSE:=MIT
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/robertying/tunet-c/releases/download/v$(PKG_VERSION)
-PKG_HASH:=6701defd90fe1b6eeb2b4cf28beb7795dea4d845827086bd6c0a5cfb35ec74d7
+PKG_HASH:=9f2b9bccff4e91c14aa06ca8378ae94a2fffe5aa34c9ff9af3562c97265a6965
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 

@@ -11,13 +11,13 @@ void print_help()
 {
     printf("\n%s\n", PACKAGE_STRING);
     printf("    C cli and library for Tsinghua University network authentication\n");
-    printf("    2019 © Robert Ying %s\n\n", PACKAGE_BUGREPORT);
+    printf("    2020 © Rui Ying %s\n\n", PACKAGE_BUGREPORT);
     printf("Usage:\n");
     printf("\t-u\t Tsinghua username\n");
-    printf("\t-p\t Tsinghua password\n");
+    printf("\t-p\t Tsinghua password (wrap it in single quotes if it contains special characters)\n");
     printf("\t\t    Caution: enter password in cli is not recommended\n");
     printf("\t\t    Please use config file instead\n");
-    printf("\t-r\t Logout first before logging in\n");
+    printf("\t-r\t Logout first before logging in; useful when network left inactive for too long\n");
     printf("\t-m\t Network choice: [net auth auth4 auth6]\n");
     printf("\t-c\t Credential config file path\n");
     printf("\t\t    Username should be in the first line and password in the second\n");
