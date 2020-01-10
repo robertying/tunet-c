@@ -21,7 +21,7 @@ endef
 
 define Package/libtidys/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_LIB) $(PKG_BUILD_DIR)/libtidys $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libtidys* $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libtidys))
