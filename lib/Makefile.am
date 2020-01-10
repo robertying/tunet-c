@@ -4,4 +4,4 @@ libportal_la_SOURCES = portal.c portal.h list.c list.h utf.c utf.h parser.c pars
                        $(srcdir)/../sds/sds.c $(srcdir)/../sds/sds.h \
                        $(srcdir)/../cJSON/cJSON.c $(srcdir)/../cJSON/cJSON.h
 libportal_la_LIBADD = -ltidys
-libportal_la_CPPFLAGS = -I$(srcdir)/../utf8proc -I$(srcdir)/../sds -I$(srcdir)/../cJSON -I$(srcdir)/../tidy-html5
+libportal_la_CPPFLAGS = -I$(srcdir)/../utf8proc -I$(srcdir)/../sds -I$(srcdir)/../cJSON -I$(srcdir)/../tidy-html5/include
