@@ -16,7 +16,7 @@
 #define AUTH4 4
 #define AUTH6 6
 
-static const char *NET_URL = "http://net.tsinghua.edu.cn";
+static const char *NET_URL = "https://net.tsinghua.edu.cn";
 static const char *NET_LOGIN_URL = "https://net.tsinghua.edu.cn/do_login.php";
 static const char *AUTH4_URL = "https://auth4.tsinghua.edu.cn/cgi-bin/srun_portal";
 static const char *AUTH6_URL = "https://auth6.tsinghua.edu.cn/cgi-bin/srun_portal";
@@ -137,7 +137,7 @@ static res check_response(sds message)
 
 static sds get_ac_id(CURL *curl)
 {
-    curl_easy_setopt(curl, CURLOPT_URL, NET_URL);
+    curl_easy_setopt(curl, CURLOPT_URL, AUTH4_URL);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, default_callback);
     CURLcode response = curl_easy_perform(curl);
@@ -150,7 +150,7 @@ static sds get_ac_id(CURL *curl)
     else
     {
         char *url;
-        response = curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
+        response = curl_easy_getinfo(curl, CURLINFO_REDIRECT_URL, &url);
         if ((response == CURLE_OK) && url)
         {
             char *substr_start = strstr(url, "index_");
