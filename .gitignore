@@ -121,7 +121,8 @@ lib/utf8proc_data.c
 
 # make binary
 build/
-/tunet*
+tunet*
+!/tunet
 
 # jni
 !tunet-jni.c
