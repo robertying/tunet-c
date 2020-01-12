@@ -2,7 +2,7 @@
 
 C cli and library for Tsinghua University network authentication.
 
-Support `auth4`, `auth6` and `net`, including wireless `Tsinghua-5G`, `Tsinghua` and `Tsinghua-IPv4`.
+Support `auth4`, `auth6` and `net`, including wired and wireless `Tsinghua-5G`, `Tsinghua` and `Tsinghua-IPv4`.
 
 You can use it as a command line tool or integrate the lib into any application.
 
@@ -69,6 +69,8 @@ You could add an init script to run `tunet` on boot.
 vi /etc/init.d/tunet
 ```
 
+With the following content:
+
 ```sh
 #!/bin/sh /etc/rc.common
 # /etc/init.d/tunet
@@ -78,7 +80,6 @@ DELAY=10
 
 start() {
         tunet -m auth4 -c /root/.tunet_config -r
-        logger -t tunet "Re-logged in with auth4."
 }
 
 boot() {
@@ -187,7 +188,7 @@ A shared library `libtunet` in `$prefix/lib` and a header file `tunet.h` in `$pr
 
 ### Android
 
-See [CampusNet-Android](https://github.com/robertying/CampusNet-Android) for details about NDK.
+See [CampusNet-Android](https://github.com/robertying/CampusNet-Android) for details about NDK integration.
 
 ## Contributing
 
