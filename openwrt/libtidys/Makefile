@@ -8,8 +8,7 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 define Package/libtidys
-	SECTION:=utils
-	CATEGORY:=Network
+	CATEGORY:=Libraries
 	TITLE:=The granddaddy of HTML tools, with support for modern standards
 	URL:=https://www.html-tidy.org
 endef
