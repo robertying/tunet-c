@@ -1,7 +1,6 @@
 lib_LTLIBRARIES = libtunet.la
 libtunet_la_CPPFLAGS = -I$(srcdir) -I$(srcdir)/../lib \
-                       -I$(srcdir)/../utf8proc -I$(srcdir)/../sds -I$(srcdir)/../cJSON \
-                       -I$(srcdir)/../tidy-html5/include
+                       -I$(srcdir)/../utf8proc -I$(srcdir)/../sds -I$(srcdir)/../cJSON
 libtunet_la_SOURCES = tunet.c tunet.h
 libtunet_la_LIBADD = ../lib/libportal.la $(CRYPTOLIB) $(CURLLIB)
 
