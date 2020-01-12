@@ -21,7 +21,7 @@ endef
 
 define Package/libtidys/install
 	$(INSTALL_DIR) $(1)/usr/include $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/libtidys $(1)/usr/include/
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/ $(1)/usr/include/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libtidys.{a,so*} $(1)/usr/lib/
 endef
 
