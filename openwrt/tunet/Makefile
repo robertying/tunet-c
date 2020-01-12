@@ -9,7 +9,7 @@ PKG_LICENSE:=MIT
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/robertying/tunet-c/releases/download/v$(PKG_VERSION)
-PKG_HASH:=c007db86f9d2ae5c9ae6856ecbf4e8a425e580ae643d51dd32dcce3ad3e69780
+PKG_HASH:=355f0c0500e4b41914f67db8274a055cce28270ebbdc688417c16474ccae4f8e
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
