@@ -5,8 +5,10 @@ AM_INIT_AUTOMAKE([foreign -Wall])
 
 AC_CHECK_LIB([crypto], [SHA1], [CRYPTOLIB=-lcrypto], [AC_MSG_ERROR([Cannot find libopenssl])])
 AC_CHECK_LIB([curl], [curl_easy_setopt], [CURLLIB=-lcurl], [AC_MSG_ERROR([Cannot find libcurl])])
+AC_CHECK_LIB([tidy], [tidyGetChild], [TIDYLIB=-ltidy], [AC_MSG_ERROR([Cannot find libtidy])])
 AC_SUBST([CRYPTOLIB])
 AC_SUBST([CURLLIB])
+AC_SUBST([TIDYLIB])
 
 AC_CANONICAL_HOST
 AM_PROG_AR

@@ -9,7 +9,7 @@ PKG_LICENSE:=MIT
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/robertying/tunet-c/releases/download/v$(PKG_VERSION)
-PKG_HASH:=355f0c0500e4b41914f67db8274a055cce28270ebbdc688417c16474ccae4f8e
+PKG_HASH:=41475f6d1c5895a49929543c5585b16f9d8059f80e61b723af86f888be310f82
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
@@ -32,7 +32,7 @@ endef
 
 define Package/libtunet
   $(call Package/tunet/Default)
-  DEPENDS:= +libopenssl +libcurl +libtidys
+  DEPENDS:= +libopenssl +libcurl +libtidy
 endef
 
 define Package/tunet/install
