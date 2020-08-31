@@ -205,7 +205,7 @@ static res auth_login(const char *username, const char *password, char stack)
     sds full_encoded_info = sdscatprintf(sdsempty(), "{SRBX1}%s", encoded_info);
     char *url_encoded_info = curl_easy_escape(curl, full_encoded_info, sdslen(full_encoded_info));
 
-    sds password_md5 = md5_hmac(challenge, password);
+    sds password_md5 = md5(password);
     sds full_password_md5 = sdscatprintf(sdsempty(), "{MD5}%s", password_md5);
     char *url_encoded_password_md5 = curl_easy_escape(curl, full_password_md5, sdslen(full_password_md5));
     sds combined = sdscatprintf(sdsempty(), "%s%s%s%s%s1%s%s200%s1%s{SRBX1}%s",

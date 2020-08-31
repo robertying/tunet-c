@@ -168,19 +168,15 @@ sds md5(const char *str)
     return s;
 }
 
-sds md5_hmac(const char *key, const char *data)
+sds md5(const char *data)
 {
-    unsigned int md_len;
-    unsigned char md[EVP_MAX_MD_SIZE];
+    unsigned char md[MD5_DIGEST_LENGTH];
 
-    HMAC(EVP_md5(), key, strlen(key),
-         (unsigned char *)data, strlen(data),
-         md, &md_len);
-    md[md_len] = 0;
+    MD5((unsigned char *)data, strlen(data), md);
 
     sds s = sdsempty();
     int i;
-    for (i = 0; i < md_len; i++)
+    for (i = 0; i < MD5_DIGEST_LENGTH; i++)
     {
         s = sdscatprintf(s, "%02x", md[i]);
     }
