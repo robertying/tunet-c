@@ -197,7 +197,7 @@ static res auth_login(const char *username, const char *password, char stack)
         return EMPTY_CHALLENGE;
 
     sds info = sdscatprintf(sdsempty(),
-                            "{\"username\":\"%s\",\"password\":\"%s\",\"ip\":\"\",\"acid\":\"%s\",\"enc_ver\":\"srun_bx1\"}",
+                            "{\"username\": \"%s\", \"password\": \"%s\", \"ip\": \"\", \"acid\": \"%s\", \"enc_ver\": \"srun_bx1\"}",
                             username,
                             password,
                             ac_id);
