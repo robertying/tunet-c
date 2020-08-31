@@ -84,7 +84,7 @@ static size_t write_to_tidy_callback(char *in, size_t size, size_t nmemb, TidyBu
 static sds get_challenge(CURL *curl, const char *username, char stack)
 {
     sds composed_url = sdscatprintf(sdsempty(),
-                                    "%s?username=%s&float_stack=1&ip&callback=callback",
+                                    "%s?username=%s&double_stack=1&callback=callback",
                                     stack == AUTH4 ? AUTH4_CHALLENGE_URL : AUTH6_CHALLENGE_URL,
                                     username);
     sds challenge;
@@ -214,7 +214,7 @@ static res auth_login(const char *username, const char *password, char stack)
     sds chksum = sha1(combined);
 
     sds data = sdscatprintf(sdsempty(),
-                            "info=%s&action=login&float_stack=1&ac_id=%s&n=200&type=1&username=%s&password=%s&chksum=%s",
+                            "info=%s&action=login&double_stack=1&ac_id=%s&n=200&type=1&username=%s&password=%s&chksum=%s",
                             url_encoded_info,
                             ac_id,
                             username,
