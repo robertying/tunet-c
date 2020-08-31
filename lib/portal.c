@@ -167,19 +167,3 @@ sds md5(const char *str)
 
     return s;
 }
-
-sds md5(const char *data)
-{
-    unsigned char md[MD5_DIGEST_LENGTH];
-
-    MD5((unsigned char *)data, strlen(data), md);
-
-    sds s = sdsempty();
-    int i;
-    for (i = 0; i < MD5_DIGEST_LENGTH; i++)
-    {
-        s = sdscatprintf(s, "%02x", md[i]);
-    }
-
-    return s;
-}
