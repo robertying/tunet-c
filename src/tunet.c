@@ -16,7 +16,7 @@
 #define AUTH4 4
 #define AUTH6 6
 
-static const char *NET_URL = "https://net.tsinghua.edu.cn";
+static const char *NET_URL = "http://net.tsinghua.edu.cn";
 static const char *NET_LOGIN_URL = "https://net.tsinghua.edu.cn/do_login.php";
 static const char *AUTH4_URL = "https://auth4.tsinghua.edu.cn/cgi-bin/srun_portal";
 static const char *AUTH6_URL = "https://auth6.tsinghua.edu.cn/cgi-bin/srun_portal";
@@ -137,48 +137,45 @@ static res check_response(sds message)
 
 static sds get_ac_id(CURL *curl)
 {
-    curl_easy_setopt(curl, CURLOPT_URL, AUTH4_URL);
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, default_callback);
+    sds content = sdsempty();
+
+    curl_easy_setopt(curl, CURLOPT_URL, NET_URL);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&content);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, result_callback);
     CURLcode response = curl_easy_perform(curl);
 
     if (response != CURLE_OK)
     {
         fprintf(stderr, "Error: get ac_id\n");
+        sdsfree(content);
         return sdsnew("1");
     }
     else
     {
-        char *url;
-        response = curl_easy_getinfo(curl, CURLINFO_REDIRECT_URL, &url);
-        if ((response == CURLE_OK) && url)
+        char *substr_start = strstr(content, "index_");
+        int start = substr_start - content + 6;
+        char *substr_end = strstr(content, ".html");
+        int end = substr_end - content - 1;
+
+        sdsrange(content, start, end);
+
+        int len = strlen(content);
+        if (len == 0)
         {
-            char *substr_start = strstr(url, "index_");
-            int start = substr_start - url + 6;
-            char *substr_end = strstr(url, ".html");
-            int end = substr_end - url - 1;
-
-            sds sds_url = sdsnew(url);
-            sdsrange(sds_url, start, end);
-
-            int len = strlen(sds_url);
-            if (len == 0)
-                return sdsnew("1");
-
-            int i;
-            for (i = 0; i < len; i++)
-            {
-                if (!isdigit(sds_url[i]))
-                {
-                    return sdsnew("1");
-                }
-            }
-            return sds_url;
-        }
-        else
-        {
+            sdsfree(content);
             return sdsnew("1");
         }
+
+        int i;
+        for (i = 0; i < len; i++)
+        {
+            if (!isdigit(content[i]))
+            {
+                sdsfree(content);
+                return sdsnew("1");
+            }
+        }
+        return content;
     }
 }
 
