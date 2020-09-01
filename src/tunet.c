@@ -179,7 +179,7 @@ static sds get_ac_id(CURL *curl)
     }
 }
 
-static res auth_login(const char *_username, const char *password, char stack)
+static res auth_login(const char *username, const char *password, char stack)
 {
     CURL *curl = curl_easy_init();
     struct curl_slist *headers = NULL;
@@ -189,10 +189,6 @@ static res auth_login(const char *_username, const char *password, char stack)
 #ifdef __ANDROID__
     curl_easy_setopt(curl, CURLOPT_CAINFO, CA_BUNDLE_PATH);
 #endif
-
-    sds username = sdscatprintf(sdsempty(),
-                                "%s@tsinghua",
-                                _username);
 
     sds ac_id = get_ac_id(curl);
 
@@ -252,7 +248,6 @@ static res auth_login(const char *_username, const char *password, char stack)
     sdsfree(ac_id);
     sdsfree(message);
     sdsfree(password_md5);
-    sdsfree(username);
     sdsfree(info);
     sdsfree(challenge);
     sdsfree(encoded_info);
