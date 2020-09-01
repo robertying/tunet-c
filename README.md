@@ -53,7 +53,7 @@ Please use a config file and make sure you are the only one who can access it.
 
 <del>For OpenWrt users, you can download prebuilt binary from [releases](https://github.com/robertying/tunet-c/releases).</del>
 
-_**There are no prebuilt binary for newer versions. The following guide only serves as a reference.**_
+_**There is no prebuilt binary for newer versions. The following guide only serves as a reference for installation. You need to [compile the binary](#Build-From-Source) by yourself.**_
 
 Upload them to your router and use `opkg` to install packages.
 
@@ -61,8 +61,8 @@ For example, if you are using a `mipsel_24kc` router and packages are uploaded t
 
 ```sh
 opkg install /tmp/libtidy_5.7.28-1_mipsel_24kc.ipk
-opkg install /tmp/libtunet_3.0.0-1_mipsel_24kc.ipk
-opkg install /tmp/tunet_3.0.0-1_mipsel_24kc.ipk
+opkg install /tmp/libtunet_4.0.0-1_mipsel_24kc.ipk
+opkg install /tmp/tunet_4.0.0-1_mipsel_24kc.ipk
 ```
 
 You could add an init script to run `tunet` on boot.
