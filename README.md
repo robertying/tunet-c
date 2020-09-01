@@ -2,7 +2,7 @@
 
 C cli and library for Tsinghua University network authentication.
 
-Support `auth4`, `auth6` and `net`, including wired and wireless `Tsinghua-5G`, `Tsinghua` and `Tsinghua-IPv4`.
+Support `auth4`, `auth6` and `net`, including `wired` and wireless `Tsinghua-5G`, `Tsinghua` and `Tsinghua-IPv4`.
 
 You can use it as a command line tool or integrate the lib into any application.
 
@@ -51,7 +51,9 @@ Please use a config file and make sure you are the only one who can access it.
 
 #### Prebuilt Binary
 
-For OpenWrt users, you can download prebuilt binary from [releases](https://github.com/robertying/tunet-c/releases).
+<del>For OpenWrt users, you can download prebuilt binary from [releases](https://github.com/robertying/tunet-c/releases).</del>
+
+_**There are no prebuilt binary for newer versions. The following guide only serves as a reference.**_
 
 Upload them to your router and use `opkg` to install packages.
 
@@ -110,7 +112,7 @@ Other platforms will be added gradually and you can always file an issue to requ
 
 2. Download OpenWrt SDK for your platform. Follow [Using the SDK](https://openwrt.org/docs/guide-developer/using_the_sdk).
 
-3. For example, for mt7620 and OpenWrt 19.07, download and unzip `openwrt-sdk-19.07.0-ramips-mt7620_gcc-7.5.0_musl.Linux-x86_64.tar.xz`:
+3. For example, for mt7620 and OpenWrt 19.07.0, download and unzip `openwrt-sdk-19.07.0-ramips-mt7620_gcc-7.5.0_musl.Linux-x86_64.tar.xz`:
 
    ```sh
    tar xvf openwrt-sdk-19.07.0-ramips-mt7620_gcc-7.5.0_musl.Linux-x86_64.tar.xz
